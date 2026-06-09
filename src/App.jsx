@@ -726,8 +726,8 @@ function App() {
                         cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' style='shape-rendering:crispEdges'%3E%3Cpath fill='white' d='M1 1v15l4-4 3 7 3-1-3-7 5 0z'/%3E%3Cpath fill='%23344945' d='M3 3v10l3-3 3 6 1-1-3-6 3 0z'/%3E%3C/svg%3E") 1 1, pointer`,
                       }}
                     >
-                      <div className="relative w-14 h-10 rounded-xl flex items-center justify-center transition-colors border-none bg-[#A5D6A7]">
-                        <div className="absolute -top-1.5 left-0 w-5 h-3 rounded-t-md border-none bg-[#A5D6A7]"></div>
+                      <div className="relative w-14 h-10 rounded-xl flex items-center justify-center transition-colors border-none bg-main">
+                        <div className="absolute -top-1.5 left-0 w-5 h-3 rounded-t-md border-none bg-main"></div>
                       </div>
                       <span
                         className={clsx(
