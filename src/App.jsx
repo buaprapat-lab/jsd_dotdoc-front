@@ -1138,7 +1138,7 @@ function App() {
                                 onChange={(e) =>
                                   updateRow(row.id, "topic", e.target.value)
                                 }
-                                onBlur={() => syncRowToDB(row)}
+                                onBlur={(e) => syncRowToDB({ ...row, topic: e.target.value })}
                                 onKeyDown={(e) =>
                                   e.key === "Enter" && e.target.blur()
                                 }
@@ -1240,7 +1240,7 @@ function App() {
                                   onChange={(e) =>
                                     updateRow(row.id, "link", e.target.value)
                                   }
-                                  onBlur={() => syncRowToDB(row)}
+                                  onBlur={(e) => syncRowToDB({ ...row, link: e.target.value })}
                                   onKeyDown={(e) =>
                                     e.key === "Enter" && e.target.blur()
                                   }
@@ -1418,7 +1418,7 @@ function App() {
                                 onChange={(e) =>
                                   updateRow(row.id, "provider", e.target.value)
                                 }
-                                onBlur={() => syncRowToDB(row)}
+                                onBlur={(e) => syncRowToDB({ ...row, provider: e.target.value })}
                                 onKeyDown={(e) =>
                                   e.key === "Enter" && e.target.blur()
                                 }
@@ -1434,7 +1434,7 @@ function App() {
                                 onChange={(e) =>
                                   updateRow(row.id, "sharedBy", e.target.value)
                                 }
-                                onBlur={() => syncRowToDB(row)}
+                                onBlur={(e) => syncRowToDB({ ...row, sharedBy: e.target.value })}
                                 onKeyDown={(e) =>
                                   e.key === "Enter" && e.target.blur()
                                 }
