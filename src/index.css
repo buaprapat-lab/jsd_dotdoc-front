@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    /* Shell #F7F5F1 background */
+    @apply bg-[#F7F5F1] text-[#344945] font-mono m-0 p-0 antialiased;
+  }
+}
+
+@layer components {
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#E0DCD1] rounded-full hover:bg-[#344945] transition-colors;
+  }
+}
+
+/* Original CSS Pixel Tamagotchi - Changed to Blue (#7CB9E8) */
+.pixel-tama {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  background-color: transparent;
+  box-shadow:
+    16px 0 0 0 #7CB9E8, 20px 0 0 0 #7CB9E8, 24px 0 0 0 #7CB9E8,
+    12px 4px 0 0 #7CB9E8, 16px 4px 0 0 #7CB9E8, 20px 4px 0 0 #7CB9E8, 24px 4px 0 0 #7CB9E8, 28px 4px 0 0 #7CB9E8,
+    8px 8px 0 0 #7CB9E8, 12px 8px 0 0 #344945, 16px 8px 0 0 #7CB9E8, 20px 8px 0 0 #7CB9E8, 24px 8px 0 0 #344945, 28px 8px 0 0 #7CB9E8, 32px 8px 0 0 #7CB9E8,
+    8px 12px 0 0 #7CB9E8, 12px 12px 0 0 #7CB9E8, 16px 12px 0 0 #7CB9E8, 20px 12px 0 0 #7CB9E8, 24px 12px 0 0 #7CB9E8, 28px 12px 0 0 #7CB9E8, 32px 12px 0 0 #7CB9E8,
+    8px 16px 0 0 #7CB9E8, 16px 16px 0 0 #7CB9E8, 24px 16px 0 0 #7CB9E8, 32px 16px 0 0 #7CB9E8;
+  animation: float-pixel 1s infinite alternate steps(2);
+}
+
+@keyframes float-pixel {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
