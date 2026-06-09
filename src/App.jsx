@@ -42,7 +42,7 @@ import {
   parseISO,
 } from "date-fns";
 
-const API_URL = "http://localhost:5000/api/rows";
+const API_URL = "https://jsd-dotdoc-back.onrender.com/api/rows";
 
 // Color Palette Map (Flat & Soft)
 const badgeColorMap = {
