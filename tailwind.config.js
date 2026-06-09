@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +8,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        base: 'rgb(var(--bg-base) / <alpha-value>)',
+        panel: 'rgb(var(--bg-panel) / <alpha-value>)',
+        surface: 'rgb(var(--bg-surface) / <alpha-value>)',
+        main: 'rgb(var(--text-main) / <alpha-value>)',
+        hover: 'rgb(var(--bg-hover) / <alpha-value>)',
+        border: 'rgb(var(--border-color) / <alpha-value>)',
         'pure-white': '#FFFFFF',
         'off-white': '#F6F6F6',
         'muted-gray': '#E5E5E5',

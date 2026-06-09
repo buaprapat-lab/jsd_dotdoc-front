@@ -3,9 +3,28 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-base: 247 245 241;
+    --bg-panel: 224 220 209;
+    --bg-surface: 247 245 241;
+    --text-main: 52 73 69;
+    --bg-hover: 213 227 232;
+    --border-color: 224 220 209;
+  }
+
+  .dark {
+    --bg-base: 24 24 27;
+    --bg-panel: 39 39 42;
+    --bg-surface: 63 63 70;
+    --text-main: 244 244 245;
+    --bg-hover: 82 82 91;
+    --border-color: 82 82 91;
+  }
+
   body {
-    /* Shell #F7F5F1 background */
-    @apply bg-[#F7F5F1] text-[#344945] font-mono m-0 p-0 antialiased;
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-main));
+    @apply font-mono m-0 p-0 antialiased transition-colors duration-300;
   }
 }
 
