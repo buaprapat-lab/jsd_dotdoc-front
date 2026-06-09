@@ -106,7 +106,7 @@ function App() {
   }, [isDarkMode]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 35;
+  const itemsPerPage = 30;
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -189,6 +189,8 @@ function App() {
       });
       const savedRow = await res.json();
       setRows([...rows, savedRow]);
+      setActiveFilter("All");
+      setCurrentPage(Math.ceil((rows.length + 1) / itemsPerPage));
     } catch (err) {
       console.error("Error creating row:", err);
     }
@@ -618,6 +620,50 @@ function App() {
     </AnimatePresence>
   );
 
+  const paginationUI = filteredRows.length > itemsPerPage && (
+    <div className="flex justify-center items-center gap-3 py-4 w-full">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        className="p-2.5 rounded-xl bg-panel text-main hover:bg-surface disabled:opacity-30 disabled:hover:bg-panel transition-all border-none shadow-sm font-bold"
+      >
+        <ChevronLeft size={20} />
+      </button>
+
+      {Array.from({
+        length: Math.ceil(filteredRows.length / itemsPerPage),
+      }).map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => setCurrentPage(idx + 1)}
+          className={clsx(
+            "w-10 h-10 rounded-xl text-sm font-bold transition-all border-none flex items-center justify-center shadow-sm",
+            currentPage === idx + 1
+              ? "bg-main text-white"
+              : "bg-panel text-main/70 hover:bg-surface hover:text-main"
+          )}
+        >
+          {idx + 1}
+        </button>
+      ))}
+
+      <button
+        onClick={() =>
+          setCurrentPage((prev) =>
+            Math.min(
+              prev + 1,
+              Math.ceil(filteredRows.length / itemsPerPage),
+            )
+          )
+        }
+        disabled={currentPage === Math.ceil(filteredRows.length / itemsPerPage)}
+        className="p-2.5 rounded-xl bg-panel text-main hover:bg-surface disabled:opacity-30 disabled:hover:bg-panel transition-all border-none shadow-sm font-bold"
+      >
+        <ChevronRight size={20} />
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen p-4 md:p-8 flex flex-col items-center bg-base relative overflow-hidden text-main transition-colors duration-300">
       {/* Top Navigation Area */}
@@ -716,7 +762,7 @@ function App() {
               >
                 {/* Dynamic Category Folders Area */}
                 <div className="mb-14 mt-4 w-full flex justify-center">
-                  <div className="flex flex-wrap justify-center items-start gap-6 md:gap-10 w-full max-w-7xl px-4 py-8 bg-surface rounded-[2rem] border-none">
+                  <div className="flex flex-wrap justify-center items-start gap-4 sm:gap-6 md:gap-10 w-full max-w-[860px] px-4 py-8 bg-surface rounded-[2rem] border-none mx-auto">
                     {/* ALL Folder */}
                     <motion.div
                       whileHover={{ y: -4 }}
@@ -838,7 +884,7 @@ function App() {
                         <img
                           src="/kkan.png"
                           alt="kkan"
-                          className="h-32 md:h-40 object-contain drop-shadow-sm group-hover:-translate-y-2 transition-transform duration-300"
+                          className="h-32 md:h-40 object-contain drop-shadow-sm"
                         />
                       </div>
                       {/* kneeti */}
@@ -849,7 +895,7 @@ function App() {
                         <img
                           src="/kneeti.png"
                           alt="kneeti"
-                          className="h-32 md:h-40 object-contain drop-shadow-sm group-hover:-translate-y-2 transition-transform duration-300"
+                          className="h-32 md:h-40 object-contain drop-shadow-sm"
                         />
                       </div>
                     </div>
@@ -872,6 +918,8 @@ function App() {
                     </div>
                   </div>
                 </div>
+
+                {paginationUI}
 
                 {/* Horizontally Scrollable Table Container */}
                 <div className="flex-1 w-full overflow-x-auto pb-48">
@@ -1480,55 +1528,7 @@ function App() {
                   </table>
                 </div>
 
-                {/* Pagination UI */}
-                {filteredRows.length > itemsPerPage && (
-                  <div className="flex justify-center items-center gap-2 mt-6 pb-4">
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      disabled={currentPage === 1}
-                      className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-
-                    {Array.from({
-                      length: Math.ceil(filteredRows.length / itemsPerPage),
-                    }).map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentPage(idx + 1)}
-                        className={clsx(
-                          "w-8 h-8 rounded-xl text-xs font-bold transition-all border-none flex items-center justify-center",
-                          currentPage === idx + 1
-                            ? "bg-main text-white shadow-sm"
-                            : "bg-transparent text-main/60 hover:bg-surface/80 hover:text-main",
-                        )}
-                      >
-                        {idx + 1}
-                      </button>
-                    ))}
-
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) =>
-                          Math.min(
-                            prev + 1,
-                            Math.ceil(filteredRows.length / itemsPerPage),
-                          ),
-                        )
-                      }
-                      disabled={
-                        currentPage ===
-                        Math.ceil(filteredRows.length / itemsPerPage)
-                      }
-                      className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                )}
+                {paginationUI}
               </motion.div>
             )}
           </AnimatePresence>
