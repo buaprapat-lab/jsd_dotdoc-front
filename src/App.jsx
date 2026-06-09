@@ -105,6 +105,12 @@ function App() {
     }
   }, [isDarkMode]);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 35;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchQuery]);
 
   const [availableSkills, setAvailableSkills] = useState([
     "ai",
@@ -335,6 +341,16 @@ function App() {
       }
     });
 
+    const inputId = type === "skillList" ? "manage-skill-input" : "manage-level-input";
+    const inputEl = document.getElementById(inputId);
+    if (inputEl && inputEl.value.trim()) {
+      const trimmed = inputEl.value.trim();
+      if (!finalTags.includes(trimmed)) {
+        finalTags.push(trimmed);
+      }
+      inputEl.value = "";
+    }
+
     let newRows;
     let needsDbSync = [];
 
@@ -555,6 +571,7 @@ function App() {
                 ))}
             </div>
             <input
+              id="manage-skill-input"
               type="text"
               placeholder="Type new & press Enter..."
               className="w-full text-xs p-2.5 rounded-xl mt-1 bg-panel focus:bg-surface focus:outline-none focus:ring-2 focus:ring-hover border-none"
@@ -819,7 +836,7 @@ function App() {
                         <img
                           src="/kkan.png"
                           alt="kkan"
-                          className="h-32 md:h-40 object-contain drop-shadow-sm"
+                          className="h-32 md:h-40 object-contain drop-shadow-sm group-hover:-translate-y-2 transition-transform duration-300"
                         />
                       </div>
                       {/* kneeti */}
@@ -830,7 +847,7 @@ function App() {
                         <img
                           src="/kneeti.png"
                           alt="kneeti"
-                          className="h-32 md:h-40 object-contain drop-shadow-sm"
+                          className="h-32 md:h-40 object-contain drop-shadow-sm group-hover:-translate-y-2 transition-transform duration-300"
                         />
                       </div>
                     </div>
@@ -1024,6 +1041,7 @@ function App() {
                                     ))}
                                 </div>
                                 <input
+                                  id="manage-level-input"
                                   type="text"
                                   placeholder="Type new & press Enter..."
                                   className="w-full text-xs p-2.5 rounded-xl mt-1 bg-panel focus:bg-surface focus:outline-none focus:ring-2 focus:ring-hover border-none"
@@ -1092,7 +1110,7 @@ function App() {
                       </tr>
                     </thead>
                     <tbody className="bg-surface rounded-2xl shadow-sm border-none">
-                      {filteredRows.map((row) => (
+                      {filteredRows.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
                         <motion.tr
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -1448,6 +1466,42 @@ function App() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Pagination UI */}
+                {filteredRows.length > itemsPerPage && (
+                  <div className="flex justify-center items-center gap-2 mt-6 pb-4">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    
+                    {Array.from({ length: Math.ceil(filteredRows.length / itemsPerPage) }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentPage(idx + 1)}
+                        className={clsx(
+                          "w-8 h-8 rounded-xl text-xs font-bold transition-all border-none flex items-center justify-center",
+                          currentPage === idx + 1
+                            ? "bg-main text-white shadow-sm"
+                            : "bg-transparent text-main/60 hover:bg-surface/80 hover:text-main"
+                        )}
+                      >
+                        {idx + 1}
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredRows.length / itemsPerPage)))}
+                      disabled={currentPage === Math.ceil(filteredRows.length / itemsPerPage)}
+                      className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
