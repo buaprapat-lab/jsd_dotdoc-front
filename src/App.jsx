@@ -109,6 +109,7 @@ function App() {
   const itemsPerPage = 35;
 
   useEffect(() => {
+    // eslint-disable-next-line
     setCurrentPage(1);
   }, [activeFilter, searchQuery]);
 
@@ -341,7 +342,8 @@ function App() {
       }
     });
 
-    const inputId = type === "skillList" ? "manage-skill-input" : "manage-level-input";
+    const inputId =
+      type === "skillList" ? "manage-skill-input" : "manage-level-input";
     const inputEl = document.getElementById(inputId);
     if (inputEl && inputEl.value.trim()) {
       const trimmed = inputEl.value.trim();
@@ -1110,337 +1112,348 @@ function App() {
                       </tr>
                     </thead>
                     <tbody className="bg-surface rounded-2xl shadow-sm border-none">
-                      {filteredRows.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row) => (
-                        <motion.tr
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          key={row.id}
-                          className="group hover:bg-surface/60 transition-colors duration-200"
-                        >
-                          {/* Icon Column */}
-                          <td className="px-3 py-2 text-center text-main/50 group-hover:text-main transition-colors rounded-l-2xl">
-                            <div className="flex items-center justify-center">
-                              {getStackIcon(row.stack)}
-                            </div>
-                          </td>
-                          {/* Topic */}
-                          <td className="px-4 py-2 font-semibold text-main">
-                            <input
-                              type="text"
-                              value={row.topic}
-                              onChange={(e) =>
-                                updateRow(row.id, "topic", e.target.value)
-                              }
-                              onBlur={() => syncRowToDB(row)}
-                              onKeyDown={(e) =>
-                                e.key === "Enter" && e.target.blur()
-                              }
-                              className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
-                              placeholder="Empty topic..."
-                            />
-                          </td>
-                          {/* Skill Stack */}
-                          <td className="px-4 py-2 relative">
-                            <div
-                              className="flex gap-1.5 flex-wrap cursor-pointer min-h-[28px] items-center p-1.5 hover:bg-panel/30 rounded-lg transition-colors border-none"
-                              onClick={() =>
-                                setActiveDropdown(
-                                  activeDropdown?.type === "skill" &&
-                                    activeDropdown?.rowId === row.id
-                                    ? null
-                                    : { type: "skill", rowId: row.id },
-                                )
-                              }
-                            >
-                              {row.stack.length === 0 && (
-                                <span className="text-main/50 text-xs font-normal">
-                                  Select...
-                                </span>
-                              )}
-                              {row.stack.map((s) => (
-                                <span
-                                  key={s}
-                                  className={clsx(
-                                    "px-2.5 py-1 rounded-md text-[10px] font-bold border-none whitespace-nowrap",
-                                    getBadgeColor(s),
-                                  )}
-                                >
-                                  {s}
-                                </span>
-                              ))}
-                            </div>
-                            <AnimatePresence>
-                              {activeDropdown?.type === "skill" &&
-                                activeDropdown?.rowId === row.id && (
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="absolute top-full left-4 w-52 bg-surface shadow-lg rounded-2xl p-4 z-[999] mt-2 border-none"
-                                  >
-                                    <div className="flex justify-between items-center mb-3 border-b border-border pb-2">
-                                      <span className="text-xs font-bold text-main">
-                                        Select Stack
-                                      </span>
-                                      <button
-                                        onClick={() => setActiveDropdown(null)}
-                                        className="text-main/70 hover:text-main"
-                                      >
-                                        <X size={14} />
-                                      </button>
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                      {availableSkills.map((tag) => (
-                                        <label
-                                          key={tag}
-                                          className="flex items-center gap-3 text-xs py-1.5 cursor-pointer hover:bg-panel rounded-lg px-2 transition-colors text-main font-medium"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            className="accent-[#344945] w-3.5 h-3.5 rounded-sm"
-                                            checked={row.stack.includes(tag)}
-                                            onChange={() =>
-                                              toggleTag(row.id, "stack", tag)
-                                            }
-                                          />{" "}
-                                          {tag}
-                                        </label>
-                                      ))}
-                                    </div>
-                                  </motion.div>
-                                )}
-                            </AnimatePresence>
-                          </td>
-                          {/* Link */}
-                          <td className="px-4 py-2 text-main text-xs font-medium">
-                            <div className="flex items-center gap-2 group/link bg-surface/40 rounded-lg focus-within:bg-panel/30 transition-colors p-1 pr-2 border-none">
-                              <button
-                                onClick={() => handleCopy(row.link)}
-                                className="text-main/70 hover:text-main transition-colors p-1.5 bg-surface/50 rounded-md shadow-sm border-none"
-                                title="Copy link"
-                              >
-                                {copiedLink === row.link ? (
-                                  <Check size={14} className="text-main" />
-                                ) : (
-                                  <Copy size={14} />
-                                )}
-                              </button>
+                      {filteredRows
+                        .slice(
+                          (currentPage - 1) * itemsPerPage,
+                          currentPage * itemsPerPage,
+                        )
+                        .map((row) => (
+                          <motion.tr
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            key={row.id}
+                            className="group hover:bg-surface/60 transition-colors duration-200"
+                          >
+                            {/* Icon Column */}
+                            <td className="px-3 py-2 text-center text-main/50 group-hover:text-main transition-colors rounded-l-2xl">
+                              <div className="flex items-center justify-center">
+                                {getStackIcon(row.stack)}
+                              </div>
+                            </td>
+                            {/* Topic */}
+                            <td className="px-4 py-2 font-semibold text-main">
                               <input
                                 type="text"
-                                value={row.link}
+                                value={row.topic}
                                 onChange={(e) =>
-                                  updateRow(row.id, "link", e.target.value)
+                                  updateRow(row.id, "topic", e.target.value)
                                 }
                                 onBlur={() => syncRowToDB(row)}
                                 onKeyDown={(e) =>
                                   e.key === "Enter" && e.target.blur()
                                 }
-                                className="bg-transparent w-full outline-none truncate"
-                                placeholder="https://..."
+                                className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
+                                placeholder="Empty topic..."
                               />
-                            </div>
-                          </td>
-                          {/* Level */}
-                          <td className="px-4 py-2 relative">
-                            <div
-                              className="flex gap-1.5 flex-wrap cursor-pointer min-h-[28px] items-center p-1.5 hover:bg-panel/30 rounded-lg transition-colors border-none"
-                              onClick={() =>
-                                setActiveDropdown(
-                                  activeDropdown?.type === "level" &&
-                                    activeDropdown?.rowId === row.id
-                                    ? null
-                                    : { type: "level", rowId: row.id },
-                                )
-                              }
-                            >
-                              {row.level.length === 0 && (
-                                <span className="text-main/50 text-xs font-normal">
-                                  Select...
-                                </span>
-                              )}
-                              {row.level.map((l) => (
-                                <span
-                                  key={l}
-                                  className={clsx(
-                                    "px-2.5 py-1 rounded-md text-[10px] font-bold border-none whitespace-nowrap",
-                                    getBadgeColor(l),
-                                  )}
-                                >
-                                  {l}
-                                </span>
-                              ))}
-                            </div>
-                            <AnimatePresence>
-                              {activeDropdown?.type === "level" &&
-                                activeDropdown?.rowId === row.id && (
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="absolute top-full left-4 w-52 bg-surface shadow-lg rounded-2xl p-4 z-[999] mt-2 border-none"
-                                  >
-                                    <div className="flex justify-between items-center mb-3 border-b border-border pb-2">
-                                      <span className="text-xs font-bold text-main">
-                                        Select Level
-                                      </span>
-                                      <button
-                                        onClick={() => setActiveDropdown(null)}
-                                        className="text-main/70 hover:text-main"
-                                      >
-                                        <X size={14} />
-                                      </button>
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                      {availableLevels.map((tag) => (
-                                        <label
-                                          key={tag}
-                                          className="flex items-center gap-3 text-xs py-1.5 cursor-pointer hover:bg-panel rounded-lg px-2 transition-colors text-main font-medium"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            className="accent-[#344945] w-3.5 h-3.5 rounded-sm"
-                                            checked={row.level.includes(tag)}
-                                            onChange={() =>
-                                              toggleTag(row.id, "level", tag)
-                                            }
-                                          />{" "}
-                                          {tag}
-                                        </label>
-                                      ))}
-                                    </div>
-                                  </motion.div>
+                            </td>
+                            {/* Skill Stack */}
+                            <td className="px-4 py-2 relative">
+                              <div
+                                className="flex gap-1.5 flex-wrap cursor-pointer min-h-[28px] items-center p-1.5 hover:bg-panel/30 rounded-lg transition-colors border-none"
+                                onClick={() =>
+                                  setActiveDropdown(
+                                    activeDropdown?.type === "skill" &&
+                                      activeDropdown?.rowId === row.id
+                                      ? null
+                                      : { type: "skill", rowId: row.id },
+                                  )
+                                }
+                              >
+                                {row.stack.length === 0 && (
+                                  <span className="text-main/50 text-xs font-normal">
+                                    Select...
+                                  </span>
                                 )}
-                            </AnimatePresence>
-                          </td>
-                          {/* Date & Note */}
-                          <td className="px-4 py-2 text-main text-xs font-medium relative">
-                            <div
-                              className="flex items-center gap-2 p-1.5 hover:bg-panel/30 rounded-lg cursor-pointer min-h-[28px] max-w-[130px] truncate transition-colors border-none"
-                              onClick={() =>
-                                setActiveDropdown(
-                                  activeDropdown?.type === "date" &&
-                                    activeDropdown?.rowId === row.id
-                                    ? null
-                                    : { type: "date", rowId: row.id },
-                                )
-                              }
-                            >
-                              <CalendarDays
-                                size={14}
-                                className="text-main/50 min-w-[14px]"
-                              />
-                              {row.date ? (
-                                <span className="truncate">
-                                  {format(parseISO(row.date), "dd MMM yy")}{" "}
-                                  {row.note ? `• ${row.note}` : ""}
-                                </span>
-                              ) : (
-                                <span className="text-main/50 font-normal">
-                                  Set Date
-                                </span>
-                              )}
-                            </div>
-
-                            <AnimatePresence>
-                              {activeDropdown?.type === "date" &&
-                                activeDropdown?.rowId === row.id && (
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="absolute top-full left-0 w-64 bg-surface shadow-xl rounded-2xl p-5 z-[999] mt-2 flex flex-col gap-4 border-none"
+                                {row.stack.map((s) => (
+                                  <span
+                                    key={s}
+                                    className={clsx(
+                                      "px-2.5 py-1 rounded-md text-[10px] font-bold border-none whitespace-nowrap",
+                                      getBadgeColor(s),
+                                    )}
                                   >
-                                    <div className="flex justify-between items-center">
-                                      <span className="text-xs font-bold text-main uppercase tracking-wider">
-                                        Event Details
-                                      </span>
-                                      <button
-                                        onClick={() => setActiveDropdown(null)}
-                                        className="text-main/50 hover:text-main transition-colors"
-                                      >
-                                        <X size={16} />
-                                      </button>
-                                    </div>
-                                    <input
-                                      type="date"
-                                      value={row.date}
-                                      onChange={(e) =>
-                                        updateRow(
-                                          row.id,
-                                          "date",
-                                          e.target.value,
-                                        )
-                                      }
-                                      className="bg-panel focus:bg-surface p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-hover w-full text-sm font-mono text-main transition-all border-none"
-                                    />
-                                    <textarea
-                                      value={row.note}
-                                      onChange={(e) =>
-                                        updateRow(
-                                          row.id,
-                                          "note",
-                                          e.target.value,
-                                        )
-                                      }
-                                      className="bg-panel focus:bg-surface p-3 rounded-xl outline-none focus:ring-2 focus:ring-hover text-xs w-full placeholder:text-main/50 resize-none h-20 transition-all border-none"
-                                      placeholder="Add short note..."
-                                    />
-                                    <button
-                                      onClick={() =>
-                                        saveDetailsDropdown(row.id)
-                                      }
-                                      className="w-full flex items-center justify-center gap-2 text-xs font-bold bg-main text-surface rounded-xl py-3 mt-1 hover:opacity-90 transition-all border-none"
+                                    {s}
+                                  </span>
+                                ))}
+                              </div>
+                              <AnimatePresence>
+                                {activeDropdown?.type === "skill" &&
+                                  activeDropdown?.rowId === row.id && (
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      className="absolute top-full left-4 w-52 bg-surface shadow-lg rounded-2xl p-4 z-[999] mt-2 border-none"
                                     >
-                                      <Save size={14} /> Save
-                                    </button>
-                                  </motion.div>
+                                      <div className="flex justify-between items-center mb-3 border-b border-border pb-2">
+                                        <span className="text-xs font-bold text-main">
+                                          Select Stack
+                                        </span>
+                                        <button
+                                          onClick={() =>
+                                            setActiveDropdown(null)
+                                          }
+                                          className="text-main/70 hover:text-main"
+                                        >
+                                          <X size={14} />
+                                        </button>
+                                      </div>
+                                      <div className="flex flex-col gap-1">
+                                        {availableSkills.map((tag) => (
+                                          <label
+                                            key={tag}
+                                            className="flex items-center gap-3 text-xs py-1.5 cursor-pointer hover:bg-panel rounded-lg px-2 transition-colors text-main font-medium"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              className="accent-[#344945] w-3.5 h-3.5 rounded-sm"
+                                              checked={row.stack.includes(tag)}
+                                              onChange={() =>
+                                                toggleTag(row.id, "stack", tag)
+                                              }
+                                            />{" "}
+                                            {tag}
+                                          </label>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                              </AnimatePresence>
+                            </td>
+                            {/* Link */}
+                            <td className="px-4 py-2 text-main text-xs font-medium">
+                              <div className="flex items-center gap-2 group/link bg-surface/40 rounded-lg focus-within:bg-panel/30 transition-colors p-1 pr-2 border-none">
+                                <button
+                                  onClick={() => handleCopy(row.link)}
+                                  className="text-main/70 hover:text-main transition-colors p-1.5 bg-surface/50 rounded-md shadow-sm border-none"
+                                  title="Copy link"
+                                >
+                                  {copiedLink === row.link ? (
+                                    <Check size={14} className="text-main" />
+                                  ) : (
+                                    <Copy size={14} />
+                                  )}
+                                </button>
+                                <input
+                                  type="text"
+                                  value={row.link}
+                                  onChange={(e) =>
+                                    updateRow(row.id, "link", e.target.value)
+                                  }
+                                  onBlur={() => syncRowToDB(row)}
+                                  onKeyDown={(e) =>
+                                    e.key === "Enter" && e.target.blur()
+                                  }
+                                  className="bg-transparent w-full outline-none truncate"
+                                  placeholder="https://..."
+                                />
+                              </div>
+                            </td>
+                            {/* Level */}
+                            <td className="px-4 py-2 relative">
+                              <div
+                                className="flex gap-1.5 flex-wrap cursor-pointer min-h-[28px] items-center p-1.5 hover:bg-panel/30 rounded-lg transition-colors border-none"
+                                onClick={() =>
+                                  setActiveDropdown(
+                                    activeDropdown?.type === "level" &&
+                                      activeDropdown?.rowId === row.id
+                                      ? null
+                                      : { type: "level", rowId: row.id },
+                                  )
+                                }
+                              >
+                                {row.level.length === 0 && (
+                                  <span className="text-main/50 text-xs font-normal">
+                                    Select...
+                                  </span>
                                 )}
-                            </AnimatePresence>
-                          </td>
-                          {/* Provider */}
-                          <td className="px-4 py-2 text-main text-xs font-medium">
-                            <input
-                              type="text"
-                              value={row.provider}
-                              onChange={(e) =>
-                                updateRow(row.id, "provider", e.target.value)
-                              }
-                              onBlur={() => syncRowToDB(row)}
-                              onKeyDown={(e) =>
-                                e.key === "Enter" && e.target.blur()
-                              }
-                              className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
-                              placeholder="Provider..."
-                            />
-                          </td>
-                          {/* Shared by */}
-                          <td className="px-4 py-2 text-main text-xs font-medium whitespace-nowrap">
-                            <input
-                              type="text"
-                              value={row.sharedBy || ""}
-                              onChange={(e) =>
-                                updateRow(row.id, "sharedBy", e.target.value)
-                              }
-                              onBlur={() => syncRowToDB(row)}
-                              onKeyDown={(e) =>
-                                e.key === "Enter" && e.target.blur()
-                              }
-                              className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
-                              placeholder="Name..."
-                            />
-                          </td>
-                          {/* Delete Action */}
-                          <td
-                            className="px-2 py-2 text-center text-main/30 group-hover:text-main/70 transition-colors cursor-pointer rounded-r-2xl"
-                            onClick={() => handleDeleteRow(row.id)}
-                          >
-                            <Trash
-                              size={16}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity mx-auto hover:scale-110"
-                            />
-                          </td>
-                        </motion.tr>
-                      ))}
+                                {row.level.map((l) => (
+                                  <span
+                                    key={l}
+                                    className={clsx(
+                                      "px-2.5 py-1 rounded-md text-[10px] font-bold border-none whitespace-nowrap",
+                                      getBadgeColor(l),
+                                    )}
+                                  >
+                                    {l}
+                                  </span>
+                                ))}
+                              </div>
+                              <AnimatePresence>
+                                {activeDropdown?.type === "level" &&
+                                  activeDropdown?.rowId === row.id && (
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      className="absolute top-full left-4 w-52 bg-surface shadow-lg rounded-2xl p-4 z-[999] mt-2 border-none"
+                                    >
+                                      <div className="flex justify-between items-center mb-3 border-b border-border pb-2">
+                                        <span className="text-xs font-bold text-main">
+                                          Select Level
+                                        </span>
+                                        <button
+                                          onClick={() =>
+                                            setActiveDropdown(null)
+                                          }
+                                          className="text-main/70 hover:text-main"
+                                        >
+                                          <X size={14} />
+                                        </button>
+                                      </div>
+                                      <div className="flex flex-col gap-1">
+                                        {availableLevels.map((tag) => (
+                                          <label
+                                            key={tag}
+                                            className="flex items-center gap-3 text-xs py-1.5 cursor-pointer hover:bg-panel rounded-lg px-2 transition-colors text-main font-medium"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              className="accent-[#344945] w-3.5 h-3.5 rounded-sm"
+                                              checked={row.level.includes(tag)}
+                                              onChange={() =>
+                                                toggleTag(row.id, "level", tag)
+                                              }
+                                            />{" "}
+                                            {tag}
+                                          </label>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                              </AnimatePresence>
+                            </td>
+                            {/* Date & Note */}
+                            <td className="px-4 py-2 text-main text-xs font-medium relative">
+                              <div
+                                className="flex items-center gap-2 p-1.5 hover:bg-panel/30 rounded-lg cursor-pointer min-h-[28px] max-w-[130px] truncate transition-colors border-none"
+                                onClick={() =>
+                                  setActiveDropdown(
+                                    activeDropdown?.type === "date" &&
+                                      activeDropdown?.rowId === row.id
+                                      ? null
+                                      : { type: "date", rowId: row.id },
+                                  )
+                                }
+                              >
+                                <CalendarDays
+                                  size={14}
+                                  className="text-main/50 min-w-[14px]"
+                                />
+                                {row.date ? (
+                                  <span className="truncate">
+                                    {format(parseISO(row.date), "dd MMM yy")}{" "}
+                                    {row.note ? `• ${row.note}` : ""}
+                                  </span>
+                                ) : (
+                                  <span className="text-main/50 font-normal">
+                                    Set Date
+                                  </span>
+                                )}
+                              </div>
+
+                              <AnimatePresence>
+                                {activeDropdown?.type === "date" &&
+                                  activeDropdown?.rowId === row.id && (
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      className="absolute top-full left-0 w-64 bg-surface shadow-xl rounded-2xl p-5 z-[999] mt-2 flex flex-col gap-4 border-none"
+                                    >
+                                      <div className="flex justify-between items-center">
+                                        <span className="text-xs font-bold text-main uppercase tracking-wider">
+                                          Event Details
+                                        </span>
+                                        <button
+                                          onClick={() =>
+                                            setActiveDropdown(null)
+                                          }
+                                          className="text-main/50 hover:text-main transition-colors"
+                                        >
+                                          <X size={16} />
+                                        </button>
+                                      </div>
+                                      <input
+                                        type="date"
+                                        value={row.date}
+                                        onChange={(e) =>
+                                          updateRow(
+                                            row.id,
+                                            "date",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="bg-panel focus:bg-surface p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-hover w-full text-sm font-mono text-main transition-all border-none"
+                                      />
+                                      <textarea
+                                        value={row.note}
+                                        onChange={(e) =>
+                                          updateRow(
+                                            row.id,
+                                            "note",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="bg-panel focus:bg-surface p-3 rounded-xl outline-none focus:ring-2 focus:ring-hover text-xs w-full placeholder:text-main/50 resize-none h-20 transition-all border-none"
+                                        placeholder="Add short note..."
+                                      />
+                                      <button
+                                        onClick={() =>
+                                          saveDetailsDropdown(row.id)
+                                        }
+                                        className="w-full flex items-center justify-center gap-2 text-xs font-bold bg-main text-surface rounded-xl py-3 mt-1 hover:opacity-90 transition-all border-none"
+                                      >
+                                        <Save size={14} /> Save
+                                      </button>
+                                    </motion.div>
+                                  )}
+                              </AnimatePresence>
+                            </td>
+                            {/* Provider */}
+                            <td className="px-4 py-2 text-main text-xs font-medium">
+                              <input
+                                type="text"
+                                value={row.provider}
+                                onChange={(e) =>
+                                  updateRow(row.id, "provider", e.target.value)
+                                }
+                                onBlur={() => syncRowToDB(row)}
+                                onKeyDown={(e) =>
+                                  e.key === "Enter" && e.target.blur()
+                                }
+                                className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
+                                placeholder="Provider..."
+                              />
+                            </td>
+                            {/* Shared by */}
+                            <td className="px-4 py-2 text-main text-xs font-medium whitespace-nowrap">
+                              <input
+                                type="text"
+                                value={row.sharedBy || ""}
+                                onChange={(e) =>
+                                  updateRow(row.id, "sharedBy", e.target.value)
+                                }
+                                onBlur={() => syncRowToDB(row)}
+                                onKeyDown={(e) =>
+                                  e.key === "Enter" && e.target.blur()
+                                }
+                                className="bg-transparent w-full focus:bg-panel/30 p-1.5 rounded-lg outline-none transition-colors border-none"
+                                placeholder="Name..."
+                              />
+                            </td>
+                            {/* Delete Action */}
+                            <td
+                              className="px-2 py-2 text-center text-main/30 group-hover:text-main/70 transition-colors cursor-pointer rounded-r-2xl"
+                              onClick={() => handleDeleteRow(row.id)}
+                            >
+                              <Trash
+                                size={16}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity mx-auto hover:scale-110"
+                              />
+                            </td>
+                          </motion.tr>
+                        ))}
                       {filteredRows.length === 0 && (
                         <tr>
                           <td
@@ -1471,14 +1484,18 @@ function App() {
                 {filteredRows.length > itemsPerPage && (
                   <div className="flex justify-center items-center gap-2 mt-6 pb-4">
                     <button
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
                       disabled={currentPage === 1}
                       className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
                     >
                       <ChevronLeft size={18} />
                     </button>
-                    
-                    {Array.from({ length: Math.ceil(filteredRows.length / itemsPerPage) }).map((_, idx) => (
+
+                    {Array.from({
+                      length: Math.ceil(filteredRows.length / itemsPerPage),
+                    }).map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => setCurrentPage(idx + 1)}
@@ -1486,7 +1503,7 @@ function App() {
                           "w-8 h-8 rounded-xl text-xs font-bold transition-all border-none flex items-center justify-center",
                           currentPage === idx + 1
                             ? "bg-main text-white shadow-sm"
-                            : "bg-transparent text-main/60 hover:bg-surface/80 hover:text-main"
+                            : "bg-transparent text-main/60 hover:bg-surface/80 hover:text-main",
                         )}
                       >
                         {idx + 1}
@@ -1494,8 +1511,18 @@ function App() {
                     ))}
 
                     <button
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredRows.length / itemsPerPage)))}
-                      disabled={currentPage === Math.ceil(filteredRows.length / itemsPerPage)}
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(
+                            prev + 1,
+                            Math.ceil(filteredRows.length / itemsPerPage),
+                          ),
+                        )
+                      }
+                      disabled={
+                        currentPage ===
+                        Math.ceil(filteredRows.length / itemsPerPage)
+                      }
                       className="p-2 rounded-xl text-main/50 hover:bg-surface/80 hover:text-main disabled:opacity-30 disabled:hover:bg-transparent transition-all border-none"
                     >
                       <ChevronRight size={18} />
