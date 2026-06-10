@@ -157,6 +157,13 @@ function App() {
   const [tempList, setTempList] = useState([]);
   const [editingItemIndex, setEditingItemIndex] = useState(null);
 
+  // Calendar Event Editing & View states
+  const [editingEventId, setEditingEventId] = useState(null);
+  const [editingEventTopic, setEditingEventTopic] = useState("");
+  const [editingEventTime, setEditingEventTime] = useState("");
+  const [editingEventNote, setEditingEventNote] = useState("");
+  const [selectedEventForModal, setSelectedEventForModal] = useState(null);
+
   // DB Sync helper
   const syncRowToDB = async (row) => {
     try {
@@ -210,6 +217,7 @@ function App() {
       note: finalNote,
       provider: "",
       sharedBy: "",
+      isEvent: true,
     };
     try {
       const res = await fetch(API_URL, {
@@ -226,6 +234,37 @@ function App() {
     setNewEventTime("");
     setNewEventNote("");
     setNewEventTopic("");
+  };
+
+  const handleEditEventSave = async () => {
+    if (!editingEventId) return;
+    const finalNote = editingEventTime
+      ? `${editingEventTime} - ${editingEventNote}`
+      : editingEventNote;
+    
+    const rowToEdit = rows.find((r) => r.id === editingEventId);
+    if (!rowToEdit) return;
+
+    const updatedRow = {
+      ...rowToEdit,
+      topic: editingEventTopic || "Updated Event",
+      note: finalNote,
+    };
+    
+    try {
+      await fetch(`${API_URL}/${editingEventId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedRow),
+      });
+      setRows(rows.map((r) => (r.id === editingEventId ? updatedRow : r)));
+    } catch (err) {
+      console.error("Error updating event:", err);
+    }
+    setEditingEventId(null);
+    setEditingEventTopic("");
+    setEditingEventTime("");
+    setEditingEventNote("");
   };
 
   // Handles row deletion via DELETE API
@@ -397,7 +436,7 @@ function App() {
   };
 
   const filteredRows = useMemo(() => {
-    let result = rows;
+    let result = rows.filter((r) => !r.isEvent);
     if (activeFilter !== "All") {
       result = result.filter((r) => r.stack.includes(activeFilter));
     }
@@ -1622,26 +1661,111 @@ function App() {
                                 : "opacity-100",
                             )}
                           >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteRow(ev.id);
-                              }}
-                              className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/event:opacity-100 transition-opacity hover:scale-110 shadow-sm z-40"
-                              title="Delete Event"
-                            >
-                              <Minus size={10} />
-                            </button>
-                            <div className="truncate">{ev.topic}</div>
-                            {ev.note && (
+                            {editingEventId === ev.id ? (
                               <div
-                                className={clsx(
-                                  "text-[10px] mt-1 truncate",
-                                  isToday ? "text-white/70" : "text-main/50",
-                                )}
+                                className="relative z-30 p-2 flex flex-col gap-2 bg-surface rounded-xl border border-border shadow-md"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                {ev.note}
+                                <div className="flex justify-between items-center px-1">
+                                  <span className="text-[10px] font-bold text-main">Edit</span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingEventId(null);
+                                    }}
+                                    className="text-main/50 hover:text-main"
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                </div>
+                                <input
+                                  type="text"
+                                  placeholder="Event Name"
+                                  value={editingEventTopic}
+                                  onChange={(e) => setEditingEventTopic(e.target.value)}
+                                  className="bg-panel focus:bg-surface text-xs p-1.5 rounded-lg outline-none w-full border-none font-bold text-main"
+                                />
+                                <div className="flex gap-1.5">
+                                  <input
+                                    type="time"
+                                    value={editingEventTime}
+                                    onChange={(e) => setEditingEventTime(e.target.value)}
+                                    className="bg-panel focus:bg-surface text-[10px] p-1.5 rounded-lg outline-none w-1/3 border-none text-main"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Note..."
+                                    value={editingEventNote}
+                                    onChange={(e) => setEditingEventNote(e.target.value)}
+                                    className="bg-panel focus:bg-surface text-[10px] p-1.5 rounded-lg outline-none flex-1 border-none text-main"
+                                    onKeyDown={(e) => e.key === "Enter" && handleEditEventSave()}
+                                  />
+                                </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditEventSave();
+                                  }}
+                                  className="w-full text-[10px] font-bold bg-[#7CB9E8] text-white rounded-lg py-1.5 hover:opacity-90 border-none"
+                                >
+                                  Save
+                                </button>
                               </div>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingEventId(ev.id);
+                                    setEditingEventTopic(ev.topic);
+                                    const noteParts = (ev.note || "").split(" - ");
+                                    if (noteParts.length > 1 && noteParts[0].match(/^\d{2}:\d{2}$/)) {
+                                      setEditingEventTime(noteParts[0]);
+                                      setEditingEventNote(noteParts.slice(1).join(" - "));
+                                    } else {
+                                      setEditingEventTime("");
+                                      setEditingEventNote(ev.note || "");
+                                    }
+                                  }}
+                                  className="absolute top-1.5 right-6 w-4 h-4 bg-[#7CB9E8] text-white rounded-full flex items-center justify-center opacity-0 group-hover/event:opacity-100 transition-opacity hover:scale-110 shadow-sm z-40"
+                                  title="Edit Event"
+                                >
+                                  <Pencil size={10} />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteRow(ev.id);
+                                  }}
+                                  className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/event:opacity-100 transition-opacity hover:scale-110 shadow-sm z-40"
+                                  title="Delete Event"
+                                >
+                                  <Minus size={10} />
+                                </button>
+                                <div
+                                  className="truncate cursor-pointer"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedEventForModal(ev);
+                                  }}
+                                >
+                                  {ev.topic}
+                                </div>
+                                {ev.note && (
+                                  <div
+                                    className={clsx(
+                                      "text-[10px] mt-1 truncate cursor-pointer",
+                                      isToday ? "text-white/70" : "text-main/50",
+                                    )}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedEventForModal(ev);
+                                    }}
+                                  >
+                                    {ev.note}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         ))}
@@ -1672,12 +1796,14 @@ function App() {
                       {/* Inline Add Event Form */}
                       <AnimatePresence>
                         {isAddingEvent && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="absolute inset-0 bg-surface z-30 rounded-[2rem] p-4 flex flex-col gap-3 justify-center border border-border shadow-xl"
-                          >
+                          <>
+                            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998] md:hidden" onClick={(e) => { e.stopPropagation(); setAddingEventDate(null); }} />
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.9 }}
+                              className="fixed md:absolute inset-x-4 top-1/2 -translate-y-1/2 md:inset-0 md:top-auto md:translate-y-0 bg-surface z-[9999] md:z-30 rounded-3xl md:rounded-[2rem] p-6 md:p-4 flex flex-col gap-3 justify-center border border-border shadow-2xl md:shadow-xl max-w-sm mx-auto w-auto"
+                            >
                             <div className="flex justify-between items-center">
                               <span className="text-xs font-bold text-main">
                                 Add Note
@@ -1720,6 +1846,7 @@ function App() {
                               <Save size={14} /> Save
                             </button>
                           </motion.div>
+                          </>
                         )}
                       </AnimatePresence>
                     </motion.div>
@@ -1743,6 +1870,62 @@ function App() {
           </div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedEventForModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelectedEventForModal(null)}>
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-surface rounded-3xl p-6 md:p-8 shadow-2xl w-full max-w-md border-none relative flex flex-col gap-4"
+            >
+              <button
+                onClick={() => setSelectedEventForModal(null)}
+                className="absolute top-4 right-4 text-main/50 hover:text-main bg-panel p-2 rounded-full hover:scale-105 transition-all"
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-main/60 uppercase tracking-widest">
+                  {selectedEventForModal.isEvent ? "Calendar Event" : "Topic Event"}
+                </span>
+                <h3 className="text-xl md:text-2xl font-bold text-main leading-tight">
+                  {selectedEventForModal.topic}
+                </h3>
+              </div>
+
+              {(selectedEventForModal.date || selectedEventForModal.note) && (
+                <div className="flex flex-col gap-3 mt-2 bg-panel/30 p-4 rounded-2xl">
+                  {selectedEventForModal.date && (
+                    <div className="flex items-center gap-3 text-main">
+                      <div className="w-8 h-8 rounded-xl bg-panel flex items-center justify-center text-[#7CB9E8]">
+                        <CalendarDays size={16} />
+                      </div>
+                      <span className="text-sm font-bold">
+                        {format(parseISO(selectedEventForModal.date), "EEEE, d MMM yyyy")}
+                      </span>
+                    </div>
+                  )}
+                  {selectedEventForModal.note && (
+                    <div className="flex items-start gap-3 text-main">
+                      <div className="w-8 h-8 rounded-xl bg-panel flex items-center justify-center text-[#A5D6A7] shrink-0">
+                        <Clock size={16} />
+                      </div>
+                      <span className="text-sm font-medium whitespace-pre-wrap leading-relaxed mt-1">
+                        {selectedEventForModal.note}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         title={confirmModal.title}
